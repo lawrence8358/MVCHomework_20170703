@@ -1,0 +1,14 @@
+1. 資料庫檔案並無簽入Git專案，請自行解壓縮檔案，並加入App_Data資料夾
+2. 新增刪除註記欄位，請執行底下語法。
+	alter table 客戶資料 add 是否已刪除 bit not null default(0);
+	alter table 客戶聯絡人 add 是否已刪除 bit not null default(0);
+	alter table 客戶銀行資訊 add 是否已刪除 bit not null default(0);
+3. 新增檢視表，請執行底下語法。
+	Create View View_客戶資料統計
+	AS
+		select 客戶資料.Id as 客戶Id,客戶資料.客戶名稱,count(客戶聯絡人.id) as 聯絡人數量,count(客戶銀行資訊.id) as 銀行帳戶數量
+		from 客戶資料
+		left join 客戶聯絡人 on 客戶資料.Id = 客戶聯絡人.客戶Id and 客戶聯絡人.是否已刪除=0
+		left join 客戶銀行資訊 on 客戶資料.Id = 客戶銀行資訊.客戶Id and 客戶銀行資訊.是否已刪除=0 
+		where 客戶資料.是否已刪除=0  
+		group by 客戶資料.Id,客戶資料.客戶名稱 
