@@ -16,7 +16,7 @@ namespace MVCHomework_20170703.Models
 		void Add(T entity);
 		void Delete(T entity);
 
-        T Find(object id);
-    }
+		T Find(object id);
+	}
 }
 

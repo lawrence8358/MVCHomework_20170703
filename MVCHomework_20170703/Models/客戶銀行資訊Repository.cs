@@ -3,6 +3,8 @@ using System.Linq;
 using System.Collections.Generic;
 using System.Collections;
 using System.Web.Mvc;
+using System.Linq.Expressions;
+using MVCHomework_20170703.Models.ViewModels;
 
 namespace MVCHomework_20170703.Models
 {
@@ -16,6 +18,20 @@ namespace MVCHomework_20170703.Models
         public override IQueryable<客戶銀行資訊> All()
         {
             return base.All().Where(p => !p.是否已刪除 && !p.客戶資料.是否已刪除);
+        }
+
+        public IQueryable<客戶銀行資訊> All(QueryCustomerBankViewModel queryModel)
+        {
+            var queryList = base.All();
+
+            queryList = queryList.Where(p => !p.是否已刪除 && !p.客戶資料.是否已刪除);
+
+            if (queryModel.BankId > 0)
+                queryList = queryList.Where(p => p.銀行代碼.Equals(queryModel.BankId));
+            if (!string.IsNullOrEmpty(queryModel.CustomerName))
+                queryList = queryList.Where(p => p.客戶資料.客戶名稱.Contains(queryModel.CustomerName));
+ 
+            return queryList;
         }
 
         public SelectList GetBankCodeList()

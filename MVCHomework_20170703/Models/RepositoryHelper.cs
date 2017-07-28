@@ -7,6 +7,20 @@ namespace MVCHomework_20170703.Models
 			return new EFUnitOfWork();
 		}		
 		
+		public static View_客戶資料統計Repository GetView_客戶資料統計Repository()
+		{
+			var repository = new View_客戶資料統計Repository();
+			repository.UnitOfWork = GetUnitOfWork();
+			return repository;
+		}
+
+		public static View_客戶資料統計Repository GetView_客戶資料統計Repository(IUnitOfWork unitOfWork)
+		{
+			var repository = new View_客戶資料統計Repository();
+			repository.UnitOfWork = unitOfWork;
+			return repository;
+		}		
+
 		public static 客戶資料Repository Get客戶資料Repository()
 		{
 			var repository = new 客戶資料Repository();

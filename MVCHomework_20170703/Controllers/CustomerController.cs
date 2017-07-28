@@ -7,6 +7,8 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using MVCHomework_20170703.Models;
+using PagedList;
+using MVCHomework_20170703.Models.ViewModels;
 
 namespace MVCHomework_20170703.Controllers
 {
@@ -14,19 +16,33 @@ namespace MVCHomework_20170703.Controllers
     public class CustomerController : Controller
     {
         客戶資料Repository customerRepo = RepositoryHelper.Get客戶資料Repository();
+        View_客戶資料統計Repository customerViewRepo = RepositoryHelper.GetView_客戶資料統計Repository();
+        int _pageSize = 1;
 
         // GET: Customer
-        public ActionResult Index()
+        public ActionResult Index(int pageNo = 1)
         {
-            return View(customerRepo.All());
+            //return View(customerRepo.All());
+
+            //增加分頁功能
+            var tempData = customerRepo.All().OrderBy(c => c.Id);
+            var data = tempData.ToPagedList(pageNo, this._pageSize);
+
+            return View(data);
         }
 
         [HttpPost]
-        public ActionResult Index(string CustomerName)
+        public ActionResult Index(QueryCustomerViewModel queryModel, int pageNo = 1)
         {
-            ViewBag.CustomerName = CustomerName;
+            ViewBag.CustomerName = queryModel.CustomerName;
 
-            return View(customerRepo.Where( p=> p.客戶名稱.Contains(CustomerName)));
+            //return View(customerRepo.Where( p=> p.客戶名稱.Contains(CustomerName)));
+
+            //增加分頁功能 
+            var tempData = customerRepo.All(queryModel).OrderBy(c => c.Id);
+            var data = tempData.ToPagedList(pageNo, this._pageSize);
+
+            return View(data);
         }
 
         // GET: Customer/Details/5
@@ -55,7 +71,7 @@ namespace MVCHomework_20170703.Controllers
         // 詳細資訊，請參閱 http://go.microsoft.com/fwlink/?LinkId=317598。
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Id,客戶名稱,統一編號,電話,傳真,地址,Email")] 客戶資料 客戶資料)
+        public ActionResult Create([Bind(Include = "Id,帳號,密碼,客戶分類,客戶名稱,統一編號,電話,傳真,地址,Email")] 客戶資料 客戶資料)
         {
             if (ModelState.IsValid)
             {
@@ -87,7 +103,7 @@ namespace MVCHomework_20170703.Controllers
         // 詳細資訊，請參閱 http://go.microsoft.com/fwlink/?LinkId=317598。
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "Id,客戶名稱,統一編號,電話,傳真,地址,Email")] 客戶資料 客戶資料)
+        public ActionResult Edit([Bind(Include = "Id,帳號,密碼,客戶分類,客戶名稱,統一編號,電話,傳真,地址,Email")] 客戶資料 客戶資料)
         {
             if (ModelState.IsValid)
             {
@@ -127,10 +143,28 @@ namespace MVCHomework_20170703.Controllers
             return RedirectToAction("Index");
         }
 
-        public ActionResult Report()
+        public ActionResult Report(int pageNo = 1)
         {
-            var 客戶資料統計 = ((CRMDbContext)customerRepo.UnitOfWork.Context).View_客戶資料統計;
-            return View(客戶資料統計);
+            //var 客戶資料統計 = ((CRMDbContext)customerRepo.UnitOfWork.Context).View_客戶資料統計;
+            //return View(客戶資料統計);
+
+            //增加分頁功能
+            var tempData = customerViewRepo.All().OrderBy(c => c.客戶Id);
+            var data = tempData.ToPagedList(pageNo, this._pageSize);
+
+            return View(data);
+        }
+
+        [HttpPost]
+        public ActionResult Report(QueryCustomerReportViewModel queryModel, int pageNo = 1)
+        {
+            ViewBag.CustomerName = queryModel.CustomerName;
+
+            //增加分頁功能 
+            var tempData = customerViewRepo.All(queryModel).OrderBy(c => c.客戶Id);
+            var data = tempData.ToPagedList(pageNo, this._pageSize);
+
+            return View(data);
         }
 
         protected override void Dispose(bool disposing)

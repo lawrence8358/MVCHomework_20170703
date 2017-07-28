@@ -5,6 +5,7 @@ using System.Net;
 using System.Web.Mvc;
 using MVCHomework_20170703.Models;
 using MVCHomework_20170703.Models.ViewModels;
+using PagedList;
 
 namespace MVCHomework_20170703.Controllers
 {
@@ -13,37 +14,48 @@ namespace MVCHomework_20170703.Controllers
     {
         客戶資料Repository customerRepo = RepositoryHelper.Get客戶資料Repository();
         客戶銀行資訊Repository customerBankRepo = RepositoryHelper.Get客戶銀行資訊Repository();
+        int _pageSize = 1;
 
         // GET: CustomerBank
-        public ActionResult Index()
+        public ActionResult Index(int pageNo = 1)
         { 
-            ViewBag.BankId = customerBankRepo.GetBankCodeList(); 
+            ViewBag.BankId = customerBankRepo.GetBankCodeList();
 
-            return View(customerBankRepo.All().Include(客 => 客.客戶資料));
+            //return View(customerBankRepo.All().Include(客 => 客.客戶資料));
+
+            //增加分頁功能
+            var tempData = customerBankRepo.All().Include(客 => 客.客戶資料).OrderBy(c => c.客戶Id);
+            var data = tempData.ToPagedList(pageNo, this._pageSize);
+
+            return View(data); 
         }
 
         [HttpPost]
-        public ActionResult Index(QueryCustomerBankViewModel queryModel)
+        public ActionResult Index(QueryCustomerBankViewModel queryModel, int pageNo = 1)
         { 
             if (ModelState.IsValid)
             {
                 ViewBag.BankId = customerBankRepo.GetBankCodeList();
                 ViewBag.CustomerName = queryModel.CustomerName;
 
-                IQueryable<客戶銀行資訊> query = customerBankRepo.All().Include(客 => 客.客戶資料).AsQueryable();
+                //IQueryable<客戶銀行資訊> query = customerBankRepo.All().Include(客 => 客.客戶資料).AsQueryable();
 
-                if (queryModel.BankId > 0)
-                    query = query.Where(p => p.銀行代碼.Equals(queryModel.BankId));
-                if (!string.IsNullOrEmpty(queryModel.CustomerName))
-                    query = query.Where(p => p.客戶資料.客戶名稱.Contains(queryModel.CustomerName));
+                //if (queryModel.BankId > 0)
+                //    query = query.Where(p => p.銀行代碼.Equals(queryModel.BankId));
+                //if (!string.IsNullOrEmpty(queryModel.CustomerName))
+                //    query = query.Where(p => p.客戶資料.客戶名稱.Contains(queryModel.CustomerName));
 
-                return View(query.ToList());
+                //return View(query.ToList());
+                 
+                //增加分頁功能 
+                var tempData = customerBankRepo.All(queryModel).Include(客 => 客.客戶資料).OrderBy(c => c.客戶Id);
+                var data = tempData.ToPagedList(pageNo, this._pageSize);
+
+                return View(data);
             }
 
             return View();
-        }
-
-
+        } 
 
         // GET: CustomerBank/Details/5
         public ActionResult Details(int? id)

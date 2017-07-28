@@ -1,73 +1,158 @@
 ﻿@model IEnumerable<MVCHomework_20170703.Models.客戶聯絡人>
+@using PagedList
+@using PagedList.Mvc
 
 @{
-    ViewBag.Title = "Index";
+    ViewBag.Title = "客戶聯絡人資料";
 }
 
-<h2>客戶聯絡人資料</h2>
+@section navLink {
+    <li><a href='/Index'><i class='fa fa-circle-o active'></i>@ViewBag.Title</a></li>
+}
 
-<div class="search-box">
-    @using (Html.BeginForm("Index", "CustomerContact", FormMethod.Post, new { @class = "form-inline" }))
-    {
-        <div class="form-group">
-            <input type="text" name="CustomerName" value="@ViewBag.CustomerName" class="search-text form-control" placeholder="客戶名稱" />
+<div class="row">
+    <div class="col-md-12">
+        <div class="box box-primary form-horizontal">
+            <div class="box-header with-border">
+                <h3 class="box-title"><i class="fa fa-search"></i>查詢條件</h3>
+                <div class="box-tools pull-right">
+                    <button class="btn btn-box-tool margin-l-10" data-widget="collapse">
+                        <i class="fa fa-minus"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="box-body">
+                @using (Html.BeginForm("Index", "CustomerContact", FormMethod.Post, new { id = "form1" }))
+                {
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <div class="col-md-2">
+                                    <div class="label-wrapper">
+                                        <label for="CustomerName" class="control-label">客戶名稱</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-10">
+                                    <input type="text" id="CustomerName" name="CustomerName" value="@ViewBag.CustomerName" class="search-text form-control" placeholder="客戶名稱" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <div class="col-md-2">
+                                    <div class="label-wrapper">
+                                        <label for="CustomerContactName" class="control-label">聯絡人姓名</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-10">
+                                    <input type="text" id="CustomerContactName" name="CustomerContactName" value="@ViewBag.CustomerContactName" class="search-text form-control" placeholder="聯絡人姓名" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12" style="text-align: center">
+                            <button type="submit" class="btn btn-default"><i class='fa fa-search'></i>查詢</button>
+                            <p class="btn btn-success">
+                                <a href='@Url.Action("Create")' style="color:white"><i class='fa fa-plus'></i>  新增</a>
+                            </p>
+                        </div>
+                    </div>
+                }
+            </div>
         </div>
-        <div class="form-group">
-            <input type="text" name="CustomerContactName" value="@ViewBag.CustomerContactName" class="search-text form-control" placeholder="聯絡人姓名" />
+
+        <div class="col-md-12">
+            <div class="box box-danger">
+                <div class="box-header with-border">
+                    <h3 class="box-title">顯示資料</h3>
+                    <div class="box-tools pull-right">
+                        <button class="btn btn-box-tool margin-l-10" data-widget="collapse">
+                            <i class="fa fa-minus"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="box-body">
+                    <div class="col-md-12">
+                        <div style="width: 100%; overflow: auto;">
+                            <table class="table">
+                                <tr>
+                                    <th nowrap>
+                                        @Html.DisplayNameFor(model => model.職稱)
+                                    </th>
+                                    <th nowrap>
+                                        @Html.DisplayNameFor(model => model.姓名)
+                                    </th>
+                                    <th nowrap>
+                                        @Html.DisplayNameFor(model => model.Email)
+                                    </th>
+                                    <th nowrap>
+                                        @Html.DisplayNameFor(model => model.手機)
+                                    </th>
+                                    <th nowrap>
+                                        @Html.DisplayNameFor(model => model.電話)
+                                    </th>
+                                    <th nowrap>
+                                        @Html.DisplayNameFor(model => model.客戶資料.客戶名稱)
+                                    </th>
+                                    <th></th>
+                                </tr>
+
+                                @foreach (var item in Model)
+                                {
+                                    <tr>
+                                        <td nowrap>
+                                            @Html.DisplayFor(modelItem => item.職稱)
+                                        </td>
+                                        <td nowrap>
+                                            @Html.DisplayFor(modelItem => item.姓名)
+                                        </td>
+                                        <td nowrap>
+                                            @Html.DisplayFor(modelItem => item.Email)
+                                        </td>
+                                        <td nowrap>
+                                            @Html.DisplayFor(modelItem => item.手機)
+                                        </td>
+                                        <td nowrap>
+                                            @Html.DisplayFor(modelItem => item.電話)
+                                        </td>
+                                        <td nowrap>
+                                            @Html.DisplayFor(modelItem => item.客戶資料.客戶名稱)
+                                        </td>
+                                        <td nowrap>
+                                            @Html.ActionLink("Edit", "Edit", new { id = item.Id }) |
+                                            @Html.ActionLink("Details", "Details", new { id = item.Id }) |
+                                            @Html.ActionLink("Delete", "Delete", new { id = item.Id })
+                                        </td>
+                                    </tr>
+                                }
+                            </table>
+                        </div>
+                        @Html.PagedListPager(Model as IPagedList, (p) => Url.Action("Index", new { pageNo = p }))
+                    </div>
+                </div>
+            </div>
         </div>
-        <button type="submit" class="btn btn-info">Search</button>
-        <p class="btn btn-success"> @Html.ActionLink("Create New", "Create")</p>
+    </div>
+
+    @section scripts
+{
+        <script type="text/javascript">
+            $(function () {
+                $('.pagination>li>a[href]').each(function (i, item) {
+                    var page = $(item).attr('href').replace('/CustomerContact?pageNo=', '');
+                    $(item).attr('href', '#').click(function () { postPage(page); });
+                });
+            });
+
+            function postPage(page) {
+                var targetFormId = '#form1';
+                if ($(targetFormId).size() > 0) {
+                    $('<input>')
+                        .attr({ type: 'hidden', id: 'pageNo', name: 'pageNo', value: page })
+                        .appendTo($(targetFormId));
+                    $(targetFormId).submit();
+                }
+            };
+        </script>
     }
-</div> 
-<table class="table">
-    <tr>
-        <th>
-            @Html.DisplayNameFor(model => model.職稱)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.姓名)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Email)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.手機)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.電話)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.客戶資料.客戶名稱)
-        </th>
-        <th></th>
-    </tr>
-
-@foreach (var item in Model) {
-    <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.職稱)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.姓名)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Email)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.手機)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.電話)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.客戶資料.客戶名稱)
-        </td>
-        <td>
-            @Html.ActionLink("Edit", "Edit", new { id=item.Id }) |
-            @Html.ActionLink("Details", "Details", new { id=item.Id }) |
-            @Html.ActionLink("Delete", "Delete", new { id=item.Id })
-        </td>
-    </tr>
-}
-
-</table>

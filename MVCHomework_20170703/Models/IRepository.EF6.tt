@@ -29,6 +29,8 @@ namespace <#= code.VsNamespaceSuggestion() #>
 		IQueryable<T> Where(Expression<Func<T, bool>> expression);
 		void Add(T entity);
 		void Delete(T entity);
+
+		T Find(object id);
 	}
 }<#
 
@@ -125,6 +127,10 @@ namespace <#= code.VsNamespaceSuggestion() #>
 			ObjectSet.Remove(entity);
 		}
 
+		public virtual T Find(object id)
+        {
+            return ObjectSet.Find(id);
+        }
 	}
 }<#fileManager.StartNewFile("EFUnitOfWork.cs");
 #>using System.Data.Entity;

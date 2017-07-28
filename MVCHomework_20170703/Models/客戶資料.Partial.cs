@@ -37,7 +37,17 @@ namespace MVCHomework_20170703.Models
             EmailAddress()
         ]
         public string Email { get; set; }
-    
+
+        [StringLength(50, ErrorMessage = "欄位長度不得大於 50 個字元")] 
+        public string 客戶分類 { get; set; }
+
+        [StringLength(50, ErrorMessage = "欄位長度不得大於 50 個字元")]
+        [Required]
+        public string 帳號 { get; set; }
+         
+        [Required]
+        public string 密碼 { get; set; }
+
         public virtual ICollection<客戶銀行資訊> 客戶銀行資訊 { get; set; }
         public virtual ICollection<客戶聯絡人> 客戶聯絡人 { get; set; }
     }

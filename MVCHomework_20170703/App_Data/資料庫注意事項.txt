@@ -1,3 +1,4 @@
+======第一階段作業======
 1. 資料庫檔案並無簽入Git專案，請自行解壓縮檔案，並加入App_Data資料夾
 2. 新增刪除註記欄位，請執行底下語法。
 	alter table 客戶資料 add 是否已刪除 bit not null default(0);
@@ -12,3 +13,11 @@
 		left join 客戶銀行資訊 on 客戶資料.Id = 客戶銀行資訊.客戶Id and 客戶銀行資訊.是否已刪除=0 
 		where 客戶資料.是否已刪除=0  
 		group by 客戶資料.Id,客戶資料.客戶名稱 
+
+
+======第二階段作業======
+1. 新增「客戶資料」表格，新增「客戶分類」欄位 
+	alter table  客戶資料 add 客戶分類 nvarchar(50)
+2. 實作客戶登入機制，要在「客戶資料」表格加上【帳號】、【密碼】欄位。
+	alter table  客戶資料 add 帳號 nvarchar(50)
+	alter table  客戶資料 add 密碼 nvarchar(max)

@@ -8,6 +8,7 @@ using System.Web;
 using System.Web.Mvc;
 using MVCHomework_20170703.Models;
 using MVCHomework_20170703.Models.ViewModels;
+using PagedList;
 
 namespace MVCHomework_20170703.Controllers
 {
@@ -16,29 +17,42 @@ namespace MVCHomework_20170703.Controllers
     {
         客戶資料Repository customerRepo = RepositoryHelper.Get客戶資料Repository();
         客戶聯絡人Repository customerContactRepo = RepositoryHelper.Get客戶聯絡人Repository();
+        int _pageSize = 1;
 
         // GET: CustomerContact
-        public ActionResult Index()
-        { 
-            return View(customerContactRepo.All().Include(客 => 客.客戶資料));
+        public ActionResult Index(int pageNo = 1)
+        {
+            //return View(customerContactRepo.All().Include(客 => 客.客戶資料));
+
+            //增加分頁功能
+            var tempData = customerContactRepo.All().Include(客 => 客.客戶資料).OrderBy(c => c.客戶Id);
+            var data = tempData.ToPagedList(pageNo, this._pageSize);
+
+            return View(data);
         } 
 
         [HttpPost]
-        public ActionResult Index(QueryCustomerContactViewModel queryModel)
+        public ActionResult Index(QueryCustomerContactViewModel queryModel, int pageNo = 1)
         {
             if (ModelState.IsValid)
             {
                 ViewBag.CustomerName = queryModel.CustomerName;
                 ViewBag.CustomerContactName = queryModel.CustomerContactName;
 
-                IQueryable<客戶聯絡人> query = customerContactRepo.All().Include(客 => 客.客戶資料).AsQueryable();
+                //IQueryable<客戶聯絡人> query = customerContactRepo.All().Include(客 => 客.客戶資料).AsQueryable();
 
-                if (!string.IsNullOrEmpty(queryModel.CustomerName))
-                    query = query.Where(p => p.客戶資料.客戶名稱.Contains(queryModel.CustomerName)); 
-                if (!string.IsNullOrEmpty(queryModel.CustomerContactName))
-                    query = query.Where(p => p.姓名.Contains(queryModel.CustomerContactName));
+                //if (!string.IsNullOrEmpty(queryModel.CustomerName))
+                //    query = query.Where(p => p.客戶資料.客戶名稱.Contains(queryModel.CustomerName)); 
+                //if (!string.IsNullOrEmpty(queryModel.CustomerContactName))
+                //    query = query.Where(p => p.姓名.Contains(queryModel.CustomerContactName));
 
-                return View(query.ToList());
+                //return View(query.ToList());
+
+                //增加分頁功能 
+                var tempData = customerContactRepo.All(queryModel).Include(客 => 客.客戶資料).OrderBy(c => c.客戶Id);
+                var data = tempData.ToPagedList(pageNo, this._pageSize);
+
+                return View(data); 
             }
 
             return View();
