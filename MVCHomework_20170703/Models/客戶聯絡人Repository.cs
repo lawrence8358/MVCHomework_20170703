@@ -1,6 +1,7 @@
-using System.Linq;
+﻿using System.Linq;
 using MVCHomework_20170703.Models.ViewModels;
 using System.Data.Entity;
+using System.Collections.Generic;
 
 namespace MVCHomework_20170703.Models
 {
@@ -26,8 +27,54 @@ namespace MVCHomework_20170703.Models
                 queryList = queryList.Where(p => p.客戶資料.客戶名稱.Contains(queryModel.CustomerName));
             if (!string.IsNullOrEmpty(queryModel.CustomerContactName))
                 queryList = queryList.Where(p => p.姓名.Contains(queryModel.CustomerContactName));
-              
+            if (!string.IsNullOrEmpty(queryModel.JobTitle))
+                queryList = queryList.Where(p => p.職稱.Contains(queryModel.JobTitle));
+
             return queryList;
+        }
+
+        public IQueryable<客戶聯絡人> FormCustomer(int customerId)
+        {
+            return base.All().Where(p => !p.是否已刪除 && !p.客戶資料.是否已刪除 && p.客戶Id.Equals(customerId));
+        }
+
+        public void Create(客戶聯絡人 客戶聯絡人)
+        { 
+            this.Add(客戶聯絡人);
+            this.UnitOfWork.Commit();
+        }
+
+        public void Modify(客戶聯絡人 客戶聯絡人)
+        { 
+            this.UnitOfWork.Context.Entry(客戶聯絡人).State = EntityState.Modified;
+            this.UnitOfWork.Commit();
+        }
+
+        public void Delete(int? id)
+        {
+            客戶聯絡人 客戶聯絡人 = this.Find(id);
+            客戶聯絡人.是否已刪除 = true;
+            this.UnitOfWork.Context.Entry(客戶聯絡人).State = EntityState.Modified;
+            this.UnitOfWork.Commit();
+            //this.Delete(客戶聯絡人);
+            //this.UnitOfWork.Commit();
+        }
+
+        public void BatchUpdate(List<CustomerContactBatchViewModel> data)
+        {
+            //ProductBatchView[] 此寫法在前端必須對應data[i].ProductId的格式，但在C# 6.0有問題
+            //因此目前的解法式移除Microsoft.CodeDom.Providers.DotNetCompilerPlatform
+            //解法可參考 http://haacked.com/archive/2008/10/23/model-binding-to-a-list.aspx/
+            foreach (var item in data)
+            {
+                //不需要檢查是否有異動，EF的機制會自動檢查
+                var contact = this.Find(item.Id);
+                contact.職稱 = item.職稱;
+                contact.手機 = item.手機;
+                contact.電話 = item.電話;
+            }
+
+            this.UnitOfWork.Commit();
         }
     }
 

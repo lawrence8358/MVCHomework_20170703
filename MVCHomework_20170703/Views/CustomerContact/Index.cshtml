@@ -33,7 +33,7 @@
                                     </div>
                                 </div>
                                 <div class="col-md-10">
-                                    <input type="text" id="CustomerName" name="CustomerName" value="@ViewBag.CustomerName" class="search-text form-control" placeholder="客戶名稱" />
+                                    @Html.TextBox("CustomerName", null, new { @class = "search-text form-control", placeholder = "客戶名稱" })
                                 </div>
                             </div>
                         </div>
@@ -45,7 +45,19 @@
                                     </div>
                                 </div>
                                 <div class="col-md-10">
-                                    <input type="text" id="CustomerContactName" name="CustomerContactName" value="@ViewBag.CustomerContactName" class="search-text form-control" placeholder="聯絡人姓名" />
+                                    @Html.TextBox("CustomerContactName", null, new { @class = "search-text form-control", placeholder = "聯絡人姓名" }) 
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <div class="col-md-2">
+                                    <div class="label-wrapper">
+                                        <label for="JobTitle" class="control-label">職稱</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-10">
+                                    @Html.TextBox("JobTitle", null, new { @class = "search-text form-control", placeholder = "職稱" }) 
                                 </div>
                             </div>
                         </div>

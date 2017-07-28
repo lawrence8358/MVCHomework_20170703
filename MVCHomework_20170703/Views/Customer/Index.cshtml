@@ -25,7 +25,7 @@
                 @using (Html.BeginForm("Index", "Customer", FormMethod.Post, new { id = "form1" }))
                 {
                     <div class="row">
-                        <div class="col-md-12">
+                        <div class="col-md-6">
                             <div class="form-group">
                                 <div class="col-md-2">
                                     <div class="label-wrapper">
@@ -33,7 +33,19 @@
                                     </div>
                                 </div>
                                 <div class="col-md-10">
-                                    <input type="text" name="CustomerName" value="@ViewBag.CustomerName" class="form-control" autocomplete="off" placeholder="客戶名稱" />
+                                    @Html.TextBox("CustomerName", null, new { @class = "search-text form-control", placeholder = "客戶名稱" }) 
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <div class="col-md-2">
+                                    <div class="label-wrapper">
+                                        <label for="CustomerType" class="control-label">客戶分類</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-10">
+                                    @Html.DropDownList("CustomerType", null, htmlAttributes: new { @class = "form-control" }) 
                                 </div>
                             </div>
                         </div>
@@ -70,6 +82,9 @@
                                     @Html.DisplayNameFor(model => model.客戶名稱)
                                 </th>
                                 <th nowrap>
+                                    @Html.DisplayNameFor(model => model.客戶分類)
+                                </th>
+                                <th nowrap>
                                     @Html.DisplayNameFor(model => model.統一編號)
                                 </th>
                                 <th nowrap>
@@ -92,6 +107,9 @@
                             <tr>
                                 <td nowrap>
                                     @Html.DisplayFor(modelItem => item.客戶名稱)
+                                </td>
+                                <td nowrap>
+                                    @Html.DisplayFor(modelItem => item.客戶分類)
                                 </td>
                                 <td nowrap>
                                     @Html.DisplayFor(modelItem => item.統一編號)

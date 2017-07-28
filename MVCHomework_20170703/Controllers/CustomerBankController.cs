@@ -14,7 +14,7 @@ namespace MVCHomework_20170703.Controllers
     {
         客戶資料Repository customerRepo = RepositoryHelper.Get客戶資料Repository();
         客戶銀行資訊Repository customerBankRepo = RepositoryHelper.Get客戶銀行資訊Repository();
-        int _pageSize = 1;
+        int _pageSize = 5;
 
         // GET: CustomerBank
         public ActionResult Index(int pageNo = 1)
@@ -88,8 +88,7 @@ namespace MVCHomework_20170703.Controllers
         {
             if (ModelState.IsValid)
             {
-                customerBankRepo.Add(客戶銀行資訊);
-                customerBankRepo.UnitOfWork.Commit();
+                customerBankRepo.Create(客戶銀行資訊);
                 return RedirectToAction("Index");
             }
 
@@ -122,8 +121,7 @@ namespace MVCHomework_20170703.Controllers
         {
             if (ModelState.IsValid)
             {
-                customerBankRepo.UnitOfWork.Context.Entry(客戶銀行資訊).State = EntityState.Modified;
-                customerBankRepo.UnitOfWork.Commit();
+                customerBankRepo.Modify(客戶銀行資訊);
                 return RedirectToAction("Index");
             }
             ViewBag.客戶Id = new SelectList(customerRepo.All(), "Id", "客戶名稱", 客戶銀行資訊.客戶Id);
@@ -150,12 +148,7 @@ namespace MVCHomework_20170703.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            客戶銀行資訊 客戶銀行資訊 = customerBankRepo.Find(id);
-            客戶銀行資訊.是否已刪除 = true;
-            customerBankRepo.UnitOfWork.Context.Entry(客戶銀行資訊).State = EntityState.Modified;
-            customerBankRepo.UnitOfWork.Commit();
-            //customerBankRepo.Delete(客戶銀行資訊);
-            //customerBankRepo.UnitOfWork.Commit();
+            customerBankRepo.Delete(id);
             return RedirectToAction("Index");
         }
 

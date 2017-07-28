@@ -16,12 +16,14 @@ namespace MVCHomework_20170703.Controllers
     public class CustomerController : Controller
     {
         客戶資料Repository customerRepo = RepositoryHelper.Get客戶資料Repository();
+        客戶聯絡人Repository customerContactRepo = RepositoryHelper.Get客戶聯絡人Repository();
         View_客戶資料統計Repository customerViewRepo = RepositoryHelper.GetView_客戶資料統計Repository();
-        int _pageSize = 1;
+        int _pageSize = 5;
 
         // GET: Customer
         public ActionResult Index(int pageNo = 1)
         {
+            ViewBag.CustomerType = customerRepo.GetCustomerTypeList();
             //return View(customerRepo.All());
 
             //增加分頁功能
@@ -35,6 +37,7 @@ namespace MVCHomework_20170703.Controllers
         public ActionResult Index(QueryCustomerViewModel queryModel, int pageNo = 1)
         {
             ViewBag.CustomerName = queryModel.CustomerName;
+            ViewBag.CustomerType = customerRepo.GetCustomerTypeList();
 
             //return View(customerRepo.Where( p=> p.客戶名稱.Contains(CustomerName)));
 
@@ -75,8 +78,7 @@ namespace MVCHomework_20170703.Controllers
         {
             if (ModelState.IsValid)
             {
-                customerRepo.Add(客戶資料);
-                customerRepo.UnitOfWork.Commit();
+                customerRepo.Create(客戶資料);
                 return RedirectToAction("Index");
             }
 
@@ -107,8 +109,7 @@ namespace MVCHomework_20170703.Controllers
         {
             if (ModelState.IsValid)
             {
-                customerRepo.UnitOfWork.Context.Entry(客戶資料).State = EntityState.Modified;
-                customerRepo.UnitOfWork.Commit();
+                customerRepo.Modify(客戶資料);
                 return RedirectToAction("Index");
             }
             return View(客戶資料);
@@ -134,12 +135,7 @@ namespace MVCHomework_20170703.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            客戶資料 客戶資料 = customerRepo.Find(id);
-            客戶資料.是否已刪除 = true;
-            customerRepo.UnitOfWork.Context.Entry(客戶資料).State = EntityState.Modified;
-            customerRepo.UnitOfWork.Commit();
-            //customerRepo.Delete(客戶資料);
-            //customerRepo.UnitOfWork.Commit();
+            customerRepo.Delete(id);
             return RedirectToAction("Index");
         }
 
@@ -165,6 +161,20 @@ namespace MVCHomework_20170703.Controllers
             var data = tempData.ToPagedList(pageNo, this._pageSize);
 
             return View(data);
+        }
+
+        [HttpPost]
+        public ActionResult BatchUpdate(List<CustomerContactBatchViewModel> data, int Id)
+        {
+            if (ModelState.IsValid)
+            {
+                customerContactRepo.BatchUpdate(data);
+                return RedirectToAction("Details", new { Id = Id });
+            }
+
+            ViewBag.Id = Id; 
+            ViewData.Model = customerRepo.Find(Id);
+            return View("Details");
         }
 
         protected override void Dispose(bool disposing)

@@ -33,7 +33,7 @@
                                     </div>
                                 </div>
                                 <div class="col-md-10">
-                                    <input type="text" name="CustomerName" value="@ViewBag.CustomerName" class="search-text form-control" placeholder="客戶名稱" />
+                                    @Html.TextBox("CustomerName", null, new { @class = "search-text form-control", placeholder = "客戶名稱" }) 
                                 </div>
                             </div>
                         </div>

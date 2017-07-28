@@ -17,7 +17,7 @@ namespace MVCHomework_20170703.Controllers
     {
         客戶資料Repository customerRepo = RepositoryHelper.Get客戶資料Repository();
         客戶聯絡人Repository customerContactRepo = RepositoryHelper.Get客戶聯絡人Repository();
-        int _pageSize = 1;
+        int _pageSize = 5;
 
         // GET: CustomerContact
         public ActionResult Index(int pageNo = 1)
@@ -38,8 +38,9 @@ namespace MVCHomework_20170703.Controllers
             {
                 ViewBag.CustomerName = queryModel.CustomerName;
                 ViewBag.CustomerContactName = queryModel.CustomerContactName;
+                ViewBag.JobTitle = queryModel.JobTitle;
 
-                //IQueryable<客戶聯絡人> query = customerContactRepo.All().Include(客 => 客.客戶資料).AsQueryable();
+              //IQueryable<客戶聯絡人> query = customerContactRepo.All().Include(客 => 客.客戶資料).AsQueryable();
 
                 //if (!string.IsNullOrEmpty(queryModel.CustomerName))
                 //    query = query.Where(p => p.客戶資料.客戶名稱.Contains(queryModel.CustomerName)); 
@@ -89,8 +90,7 @@ namespace MVCHomework_20170703.Controllers
         {
             if (ModelState.IsValid)
             {
-                customerContactRepo.Add(客戶聯絡人);
-                customerContactRepo.UnitOfWork.Commit();
+                customerContactRepo.Create(客戶聯絡人);
                 return RedirectToAction("Index");
             }
 
@@ -123,8 +123,7 @@ namespace MVCHomework_20170703.Controllers
         {
             if (ModelState.IsValid)
             {
-                customerContactRepo.UnitOfWork.Context.Entry(客戶聯絡人).State = EntityState.Modified;
-                customerContactRepo.UnitOfWork.Commit();
+                customerContactRepo.Modify(客戶聯絡人);
                 return RedirectToAction("Index");
             }
             ViewBag.客戶Id = new SelectList(customerRepo.All(), "Id", "客戶名稱", 客戶聯絡人.客戶Id);
@@ -151,12 +150,7 @@ namespace MVCHomework_20170703.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            客戶聯絡人 客戶聯絡人 = customerContactRepo.Find(id);
-            客戶聯絡人.是否已刪除 = true;
-            customerContactRepo.UnitOfWork.Context.Entry(客戶聯絡人).State = EntityState.Modified;
-            customerContactRepo.UnitOfWork.Commit();
-            //customerContactRepo.Delete(客戶聯絡人);
-            //customerContactRepo.UnitOfWork.Commit();
+            customerContactRepo.Delete(id); 
             return RedirectToAction("Index");
         }
 

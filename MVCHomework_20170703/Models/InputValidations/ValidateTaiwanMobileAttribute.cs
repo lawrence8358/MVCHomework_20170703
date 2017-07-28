@@ -15,6 +15,7 @@ namespace MVCHomework_20170703.Models.InputValidations
 
         public override bool IsValid(object value)
         {
+            if (value == null) return true;
             return Regex.IsMatch((string)value, @"^09\d{2}-\d{6}$");
         }
     }

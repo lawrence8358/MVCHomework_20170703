@@ -1,0 +1,54 @@
+﻿@model IEnumerable<MVCHomework_20170703.Models.客戶聯絡人>
+
+@{
+    Layout = "";
+}
+@using (Html.BeginForm(new { action = "BatchUpdate" }))
+{ 
+    <input type="hidden" id="Id" name="Id" value="@ViewBag.Id"/>
+    <div style="width: 100%; overflow: auto;">
+        <table class="table">
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.姓名)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.職稱)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.手機)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.電話)
+                </th>
+            </tr>
+
+            @{
+                var data = Model.ToArray();
+            }
+            @for (int i = 0; i < data.Length; i++)
+            {
+                <tr>
+                    <td>
+                        @Html.HiddenFor(modelItem => data[i].Id)
+                        @Html.DisplayFor(modelItem => data[i].姓名)
+                    </td>
+                    <td>
+                        @Html.EditorFor(modelItem => data[i].職稱)
+                        @Html.ValidationMessageFor(modelItem => data[i].職稱, "", new { @class = "text-danger" })
+                    </td>
+                    <td>
+                        @Html.EditorFor(modelItem => data[i].手機)
+                        @Html.ValidationMessageFor(modelItem => data[i].手機, "", new { @class = "text-danger" })
+                    </td>
+                    <td>
+                        @Html.EditorFor(modelItem => data[i].電話)
+                        @Html.ValidationMessageFor(modelItem => data[i].電話, "", new { @class = "text-danger" })
+                    </td>
+                </tr>
+            }
+        </table>
+    </div>
+
+    <button type="submit" class="btn btn-default">批次更新</button> 
+}
