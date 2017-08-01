@@ -9,6 +9,7 @@ using System.Web.Mvc;
 using MVCHomework_20170703.Models;
 using PagedList;
 using MVCHomework_20170703.Models.ViewModels;
+using ClosedXML.Excel;
 
 namespace MVCHomework_20170703.Controllers
 {
@@ -38,8 +39,8 @@ namespace MVCHomework_20170703.Controllers
         {
             ViewBag.CustomerName = queryModel.CustomerName;
             ViewBag.CustomerType = customerRepo.GetCustomerTypeList();
-             
-            var tempData = customerRepo.All(queryModel, sortName, currentSortName); 
+
+            var tempData = customerRepo.All(queryModel, sortName, currentSortName);
             var data = tempData.ToPagedList(pageNo, this._pageSize);
 
             ViewData["CurrentSortName"] = currentSortName;
@@ -47,6 +48,55 @@ namespace MVCHomework_20170703.Controllers
             ViewData["PageNo"] = pageNo;
 
             return View(data);
+        }
+
+        //增加JsonResult使用範例
+        public FileResult Excel(QueryCustomerViewModel queryModel)
+        {
+            using (XLWorkbook wb = new XLWorkbook())
+            {
+                var data = customerRepo.All(queryModel).Select(c => new { c.客戶名稱, c.客戶分類, c.統一編號, c.電話,c.傳真, c.地址, c.Email });
+                 
+                var ws = wb.Worksheets.Add("客戶資料", 1);
+                ws.Cell(1, 1).Value = "客戶名稱";
+                ws.Cell(1, 2).Value = "客戶分類";
+                ws.Cell(1, 3).Value = "統一編號";
+                ws.Cell(1, 4).Value = "電話";
+                ws.Cell(1, 5).Value = "傳真";
+                ws.Cell(1, 6).Value = "地址";
+                ws.Cell(1, 7).Value = "Email"; 
+
+                ws.Cell(2, 1).InsertData(data);
+
+                using (System.IO.MemoryStream memoryStream = new System.IO.MemoryStream())
+                {
+                    wb.SaveAs(memoryStream);
+                    return File(memoryStream.ToArray(), System.Net.Mime.MediaTypeNames.Application.Octet, "客戶資料.xlsx");
+                }
+            }
+        }
+
+        //增加JsonResult使用範例
+        public JsonResult CheckExcel(QueryCustomerViewModel queryModel)
+        {
+            var cnt = customerRepo.All(queryModel).Count();
+
+            var routeValues = new System.Web.Routing.RouteValueDictionary(queryModel);
+            var queryString = string.Empty;
+            foreach (var item in routeValues)
+            {
+                if (!string.IsNullOrEmpty(queryString)) queryString += "&";
+                queryString += item.Key + "=" + item.Value;
+            }
+            if (!string.IsNullOrEmpty(queryString)) queryString = "?" + queryString;
+
+            var result = new
+            {
+                ExcelCount = cnt,
+                ExcelUrl = string.Format("/{0}/Excel{1}", this.ControllerContext.RouteData.Values["controller"].ToString(), queryString)
+            };
+
+            return Json(result, JsonRequestBehavior.AllowGet);
         }
 
         // GET: Customer/Details/5

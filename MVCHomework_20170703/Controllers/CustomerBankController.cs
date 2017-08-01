@@ -1,11 +1,12 @@
 ﻿using System.Data;
 using System.Data.Entity;
 using System.Linq;
-using System.Net; 
+using System.Net;
 using System.Web.Mvc;
 using MVCHomework_20170703.Models;
 using MVCHomework_20170703.Models.ViewModels;
 using PagedList;
+using ClosedXML.Excel;
 
 namespace MVCHomework_20170703.Controllers
 {
@@ -18,7 +19,7 @@ namespace MVCHomework_20170703.Controllers
 
         // GET: CustomerBank
         public ActionResult Index(int pageNo = 1)
-        { 
+        {
             ViewBag.BankId = customerBankRepo.GetBankCodeList();
 
             //return View(customerBankRepo.All().Include(客 => 客.客戶資料));
@@ -27,27 +28,17 @@ namespace MVCHomework_20170703.Controllers
             var tempData = customerBankRepo.All();
             var data = tempData.ToPagedList(pageNo, this._pageSize);
 
-            return View(data); 
+            return View(data);
         }
 
         [HttpPost]
         public ActionResult Index(QueryCustomerBankViewModel queryModel, int pageNo = 1, string sortName = "", string currentSortName = "")
-        { 
+        {
             if (ModelState.IsValid)
             {
                 ViewBag.BankId = customerBankRepo.GetBankCodeList();
                 ViewBag.CustomerName = queryModel.CustomerName;
 
-                //IQueryable<客戶銀行資訊> query = customerBankRepo.All().Include(客 => 客.客戶資料).AsQueryable();
-
-                //if (queryModel.BankId > 0)
-                //    query = query.Where(p => p.銀行代碼.Equals(queryModel.BankId));
-                //if (!string.IsNullOrEmpty(queryModel.CustomerName))
-                //    query = query.Where(p => p.客戶資料.客戶名稱.Contains(queryModel.CustomerName));
-
-                //return View(query.ToList());
-                 
-                //增加分頁功能 
                 var tempData = customerBankRepo.All(queryModel, sortName, currentSortName);
                 var data = tempData.ToPagedList(pageNo, this._pageSize);
 
@@ -59,7 +50,55 @@ namespace MVCHomework_20170703.Controllers
             }
 
             return View();
-        } 
+        }
+
+        //增加JsonResult使用範例
+        public FileResult Excel(QueryCustomerBankViewModel queryModel)
+        {
+            using (XLWorkbook wb = new XLWorkbook())
+            {
+                var data = customerBankRepo.All(queryModel).Select(c => new { c.銀行名稱, c.銀行代碼, c.分行代碼, c.帳戶名稱, c.帳戶號碼, c.客戶資料.客戶名稱 });
+
+                var ws = wb.Worksheets.Add("客戶銀行資料", 1);
+                ws.Cell(1, 1).Value = "銀行名稱";
+                ws.Cell(1, 2).Value = "銀行代碼";
+                ws.Cell(1, 3).Value = "分行代碼";
+                ws.Cell(1, 4).Value = "帳戶名稱";
+                ws.Cell(1, 5).Value = "帳戶號碼";
+                ws.Cell(1, 6).Value = "客戶名稱";
+
+                ws.Cell(2, 1).InsertData(data);
+
+                using (System.IO.MemoryStream memoryStream = new System.IO.MemoryStream())
+                {
+                    wb.SaveAs(memoryStream);
+                    return File(memoryStream.ToArray(), System.Net.Mime.MediaTypeNames.Application.Octet, "客戶銀行資料.xlsx");
+                }
+            }
+        }
+
+        //增加JsonResult使用範例
+        public JsonResult CheckExcel(QueryCustomerBankViewModel queryModel)
+        {
+            var cnt = customerBankRepo.All(queryModel).Count();
+
+            var routeValues = new System.Web.Routing.RouteValueDictionary(queryModel);
+            var queryString = string.Empty;
+            foreach (var item in routeValues)
+            {
+                if (!string.IsNullOrEmpty(queryString)) queryString += "&";
+                queryString += item.Key + "=" + item.Value;
+            }
+            if (!string.IsNullOrEmpty(queryString)) queryString = "?" + queryString;
+
+            var result = new
+            {
+                ExcelCount = cnt,
+                ExcelUrl = string.Format("/{0}/Excel{1}", this.ControllerContext.RouteData.Values["controller"].ToString(), queryString)
+            };
+
+            return Json(result, JsonRequestBehavior.AllowGet);
+        }
 
         // GET: CustomerBank/Details/5
         public ActionResult Details(int? id)

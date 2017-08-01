@@ -9,6 +9,7 @@ using System.Web.Mvc;
 using MVCHomework_20170703.Models;
 using MVCHomework_20170703.Models.ViewModels;
 using PagedList;
+using ClosedXML.Excel;
 
 namespace MVCHomework_20170703.Controllers
 {
@@ -39,17 +40,7 @@ namespace MVCHomework_20170703.Controllers
                 ViewBag.CustomerName = queryModel.CustomerName;
                 ViewBag.CustomerContactName = queryModel.CustomerContactName;
                 ViewBag.JobTitle = queryModel.JobTitle;
-
-              //IQueryable<客戶聯絡人> query = customerContactRepo.All().Include(客 => 客.客戶資料).AsQueryable();
-
-                //if (!string.IsNullOrEmpty(queryModel.CustomerName))
-                //    query = query.Where(p => p.客戶資料.客戶名稱.Contains(queryModel.CustomerName)); 
-                //if (!string.IsNullOrEmpty(queryModel.CustomerContactName))
-                //    query = query.Where(p => p.姓名.Contains(queryModel.CustomerContactName));
-
-                //return View(query.ToList());
-
-                //增加分頁功能 
+                 
                 var tempData = customerContactRepo.All(queryModel, sortName, currentSortName);
                 var data = tempData.ToPagedList(pageNo, this._pageSize);
 
@@ -61,6 +52,54 @@ namespace MVCHomework_20170703.Controllers
             }
 
             return View();
+        }
+
+        //增加JsonResult使用範例
+        public FileResult Excel(QueryCustomerContactViewModel queryModel)
+        {
+            using (XLWorkbook wb = new XLWorkbook())
+            { 
+                var data = customerContactRepo.All(queryModel).Select(c => new { c.職稱, c.姓名, c.Email, c.手機, c.電話, c.客戶資料.客戶名稱 });
+
+                var ws = wb.Worksheets.Add("客戶聯絡人資料", 1);
+                ws.Cell(1, 1).Value = "職稱";
+                ws.Cell(1, 2).Value = "姓名";
+                ws.Cell(1, 3).Value = "Email";
+                ws.Cell(1, 4).Value = "手機";
+                ws.Cell(1, 5).Value = "電話";
+                ws.Cell(1, 6).Value = "客戶名稱";
+
+                ws.Cell(2, 1).InsertData(data);
+
+                using (System.IO.MemoryStream memoryStream = new System.IO.MemoryStream())
+                {
+                    wb.SaveAs(memoryStream);
+                    return File(memoryStream.ToArray(), System.Net.Mime.MediaTypeNames.Application.Octet, "客戶聯絡人資料.xlsx");
+                }
+            }
+        }
+
+        //增加JsonResult使用範例
+        public JsonResult CheckExcel(QueryCustomerContactViewModel queryModel)
+        {
+            var cnt = customerContactRepo.All(queryModel).Count();
+
+            var routeValues = new System.Web.Routing.RouteValueDictionary(queryModel);
+            var queryString = string.Empty;
+            foreach (var item in routeValues)
+            {
+                if (!string.IsNullOrEmpty(queryString)) queryString += "&";
+                queryString += item.Key + "=" + item.Value;
+            }
+            if (!string.IsNullOrEmpty(queryString)) queryString = "?" + queryString;
+
+            var result = new
+            {
+                ExcelCount = cnt,
+                ExcelUrl = string.Format("/{0}/Excel{1}", this.ControllerContext.RouteData.Values["controller"].ToString(), queryString)
+            };
+
+            return Json(result, JsonRequestBehavior.AllowGet);
         }
 
         // GET: CustomerContact/Details/5

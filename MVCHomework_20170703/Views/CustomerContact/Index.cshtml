@@ -68,6 +68,7 @@
                             <p class="btn btn-success">
                                 <a href='@Url.Action("Create")' style="color:white"><i class='fa fa-plus'></i>  新增</a>
                             </p>
+                            <button type="button" onclick="buttonExport()" class="btn btn-info"><i class='fa fa-file-excel-o'></i> 匯出Excel</button>
                         </div>
                     </div>
                 }
@@ -144,7 +145,7 @@
                     </div>
                 </div>
             </div>
-        </div> 
+        </div>
     </div>
     @Html.Hidden("Table_Sort", ViewData["SortName"])
     @Html.Hidden("Table_CurrentSortName", ViewData["CurrentSortName"])
@@ -154,7 +155,12 @@
 @section scripts
 {
     <script src="~/Scripts/pageAndSort.js"></script>
-    <script type="text/javascript">
+    <script src="~/Scripts/exportExcel.js"></script>
+    <script type="text/javascript"> 
+        function buttonExport() {
+            CheckExportExcel("/CustomerContact/CheckExcel", { CustomerName: $("#CustomerName").val(), CustomerType: $("#CustomerType").val() });
+        }
         initPageAndSort("/CustomerContact");
     </script>
+
 }
