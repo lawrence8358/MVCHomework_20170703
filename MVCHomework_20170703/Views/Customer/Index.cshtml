@@ -33,7 +33,7 @@
                                     </div>
                                 </div>
                                 <div class="col-md-10">
-                                    @Html.TextBox("CustomerName", null, new { @class = "search-text form-control", placeholder = "客戶名稱" }) 
+                                    @Html.TextBox("CustomerName", null, new { @class = "search-text form-control", placeholder = "客戶名稱" })
                                 </div>
                             </div>
                         </div>
@@ -45,7 +45,7 @@
                                     </div>
                                 </div>
                                 <div class="col-md-10">
-                                    @Html.DropDownList("CustomerType", null, htmlAttributes: new { @class = "form-control" }) 
+                                    @Html.DropDownList("CustomerType", null, htmlAttributes: new { @class = "form-control" })
                                 </div>
                             </div>
                         </div>
@@ -75,64 +75,64 @@
             </div>
             <div class="box-body">
                 <div class="col-md-12">
-                    <div style="width: 100%; overflow: auto;"> 
+                    <div style="width: 100%; overflow: auto;">
                         <table class="table">
                             <tr>
                                 <th nowrap>
-                                    @Html.DisplayNameFor(model => model.客戶名稱)
+                                    <a class="tableSort" href="customerName">@Html.DisplayNameFor(model => model.客戶名稱)<span class="sortOrder"></span></a>
                                 </th>
                                 <th nowrap>
-                                    @Html.DisplayNameFor(model => model.客戶分類)
+                                    <a class="tableSort" href="customerType">@Html.DisplayNameFor(model => model.客戶分類)<span class="sortOrder"></span></a>
                                 </th>
                                 <th nowrap>
-                                    @Html.DisplayNameFor(model => model.統一編號)
+                                    <a class="tableSort" href="texNo">@Html.DisplayNameFor(model => model.統一編號)<span class="sortOrder"></span></a>
                                 </th>
                                 <th nowrap>
-                                    @Html.DisplayNameFor(model => model.電話)
+                                    <a class="tableSort" href="phone">@Html.DisplayNameFor(model => model.電話)<span class="sortOrder"></span></a>
                                 </th>
                                 <th nowrap>
-                                    @Html.DisplayNameFor(model => model.傳真)
+                                    <a class="tableSort" href="fax">@Html.DisplayNameFor(model => model.傳真)<span class="sortOrder"></span></a>
                                 </th>
                                 <th nowrap>
-                                    @Html.DisplayNameFor(model => model.地址)
+                                    <a class="tableSort" href="address">@Html.DisplayNameFor(model => model.地址)<span class="sortOrder"></span></a>
                                 </th>
                                 <th nowrap>
-                                    @Html.DisplayNameFor(model => model.Email)
+                                    <a class="tableSort" href="email">@Html.DisplayNameFor(model => model.Email)<span class="sortOrder"></span></a>
                                 </th>
                                 <th></th>
                             </tr>
 
                             @foreach (var item in Model)
                             {
-                            <tr>
-                                <td nowrap>
-                                    @Html.DisplayFor(modelItem => item.客戶名稱)
-                                </td>
-                                <td nowrap>
-                                    @Html.DisplayFor(modelItem => item.客戶分類)
-                                </td>
-                                <td nowrap>
-                                    @Html.DisplayFor(modelItem => item.統一編號)
-                                </td>
-                                <td nowrap>
-                                    @Html.DisplayFor(modelItem => item.電話)
-                                </td>
-                                <td nowrap>
-                                    @Html.DisplayFor(modelItem => item.傳真)
-                                </td>
-                                <td nowrap>
-                                    @Html.DisplayFor(modelItem => item.地址)
-                                </td>
-                                <td nowrap>
-                                    @Html.DisplayFor(modelItem => item.Email)
-                                </td>
-                                <td nowrap>
-                                    @Html.ActionLink("Edit", "Edit", new { id = item.Id }) |
-                                    @Html.ActionLink("Details", "Details", new { id = item.Id }) |
-                                    @Html.ActionLink("Delete", "Delete", new { id = item.Id })
-                                </td>
-                            </tr>
-                        } 
+                                <tr>
+                                    <td nowrap>
+                                        @Html.DisplayFor(modelItem => item.客戶名稱)
+                                    </td>
+                                    <td nowrap>
+                                        @Html.DisplayFor(modelItem => item.客戶分類)
+                                    </td>
+                                    <td nowrap>
+                                        @Html.DisplayFor(modelItem => item.統一編號)
+                                    </td>
+                                    <td nowrap>
+                                        @Html.DisplayFor(modelItem => item.電話)
+                                    </td>
+                                    <td nowrap>
+                                        @Html.DisplayFor(modelItem => item.傳真)
+                                    </td>
+                                    <td nowrap>
+                                        @Html.DisplayFor(modelItem => item.地址)
+                                    </td>
+                                    <td nowrap>
+                                        @Html.DisplayFor(modelItem => item.Email)
+                                    </td>
+                                    <td nowrap>
+                                        @Html.ActionLink("Edit", "Edit", new { id = item.Id }) |
+                                        @Html.ActionLink("Details", "Details", new { id = item.Id }) |
+                                        @Html.ActionLink("Delete", "Delete", new { id = item.Id })
+                                    </td>
+                                </tr>
+                            }
                         </table>
                     </div>
                     @Html.PagedListPager(Model as IPagedList, (p) => Url.Action("Index", new { pageNo = p }))
@@ -140,26 +140,15 @@
             </div>
         </div>
     </div>
+    @Html.Hidden("Table_Sort", ViewData["SortName"])
+    @Html.Hidden("Table_CurrentSortName", ViewData["CurrentSortName"])
+    @Html.Hidden("Table_PageNo", ViewData["PageNo"])
 </div>
 
 @section scripts
 {
+    <script src="~/Scripts/pageAndSort.js"></script>
     <script type="text/javascript">
-        $(function () {
-            $('.pagination>li>a[href]').each(function (i, item) {
-                var page = $(item).attr('href').replace('/Customer?pageNo=', '');
-                $(item).attr('href', '#').click(function () { postPage(page); });
-            });
-        });
-
-        function postPage(page) {
-            var targetFormId = '#form1';
-            if ($(targetFormId).size() > 0) {
-                $('<input>')
-                    .attr({ type: 'hidden', id: 'pageNo', name: 'pageNo', value: page })
-                    .appendTo($(targetFormId));
-                $(targetFormId).submit();
-            }
-        };
+        initPageAndSort("/Customer");
     </script>
 }

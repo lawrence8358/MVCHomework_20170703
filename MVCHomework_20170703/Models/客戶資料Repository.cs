@@ -17,10 +17,10 @@ namespace MVCHomework_20170703.Models
 
         public override IQueryable<客戶資料> All()
         {
-            return base.All().Where(p => !p.是否已刪除);
+            return base.All().Where(p => !p.是否已刪除).OrderBy(c => c.Id);
         }
 
-        public IQueryable<客戶資料> All(QueryCustomerViewModel queryModel)
+        public IQueryable<客戶資料> All(QueryCustomerViewModel queryModel, string sortName = "", string currentSortName = "")
         {
             var queryList = base.All();
 
@@ -30,6 +30,62 @@ namespace MVCHomework_20170703.Models
                 queryList = queryList.Where(p => p.客戶名稱.Contains(queryModel.CustomerName));
             if (!string.IsNullOrEmpty(queryModel.CustomerType))
                 queryList = queryList.Where(p => p.客戶分類.Equals(queryModel.CustomerType));
+
+            switch (currentSortName)
+            {
+                case "customerName":
+                    if (sortName.Equals(currentSortName))
+                        queryList = queryList.OrderByDescending(c => c.客戶名稱);
+                    else
+                        queryList = queryList.OrderBy(c => c.客戶名稱);
+                    break;
+
+                case "customerType":
+                    if (sortName.Equals(currentSortName))
+                        queryList = queryList.OrderByDescending(c => c.客戶分類);
+                    else
+                        queryList = queryList.OrderBy(c => c.客戶分類);
+                    break;
+
+                case "texNo":
+                    if (sortName.Equals(currentSortName))
+                        queryList = queryList.OrderByDescending(c => c.統一編號);
+                    else
+                        queryList = queryList.OrderBy(c => c.統一編號);
+                    break;
+
+                case "phone":
+                    if (sortName.Equals(currentSortName))
+                        queryList = queryList.OrderByDescending(c => c.電話);
+                    else
+                        queryList = queryList.OrderBy(c => c.電話);
+                    break;
+
+                case "fax":
+                    if (sortName.Equals(currentSortName))
+                        queryList = queryList.OrderByDescending(c => c.傳真);
+                    else
+                        queryList = queryList.OrderBy(c => c.傳真);
+                    break;
+
+                case "address":
+                    if (sortName.Equals(currentSortName))
+                        queryList = queryList.OrderByDescending(c => c.地址);
+                    else
+                        queryList = queryList.OrderBy(c => c.地址);
+                    break;
+
+                case "email":
+                    if (sortName.Equals(currentSortName))
+                        queryList = queryList.OrderByDescending(c => c.Email);
+                    else
+                        queryList = queryList.OrderBy(c => c.Email);
+                    break;
+
+                default:
+                    queryList = queryList.OrderBy(c => c.Id);
+                    break;
+            }
 
             return queryList;
         }

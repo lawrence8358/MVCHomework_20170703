@@ -27,23 +27,24 @@ namespace MVCHomework_20170703.Controllers
             //return View(customerRepo.All());
 
             //增加分頁功能
-            var tempData = customerRepo.All().OrderBy(c => c.Id);
+            var tempData = customerRepo.All();
             var data = tempData.ToPagedList(pageNo, this._pageSize);
 
             return View(data);
         }
 
         [HttpPost]
-        public ActionResult Index(QueryCustomerViewModel queryModel, int pageNo = 1)
+        public ActionResult Index(QueryCustomerViewModel queryModel, int pageNo = 1, string sortName = "", string currentSortName = "")
         {
             ViewBag.CustomerName = queryModel.CustomerName;
             ViewBag.CustomerType = customerRepo.GetCustomerTypeList();
-
-            //return View(customerRepo.Where( p=> p.客戶名稱.Contains(CustomerName)));
-
-            //增加分頁功能 
-            var tempData = customerRepo.All(queryModel).OrderBy(c => c.Id);
+             
+            var tempData = customerRepo.All(queryModel, sortName, currentSortName); 
             var data = tempData.ToPagedList(pageNo, this._pageSize);
+
+            ViewData["CurrentSortName"] = currentSortName;
+            ViewData["SortName"] = sortName;
+            ViewData["PageNo"] = pageNo;
 
             return View(data);
         }
@@ -145,20 +146,24 @@ namespace MVCHomework_20170703.Controllers
             //return View(客戶資料統計);
 
             //增加分頁功能
-            var tempData = customerViewRepo.All().OrderBy(c => c.客戶Id);
+            var tempData = customerViewRepo.All();
             var data = tempData.ToPagedList(pageNo, this._pageSize);
 
             return View(data);
         }
 
         [HttpPost]
-        public ActionResult Report(QueryCustomerReportViewModel queryModel, int pageNo = 1)
+        public ActionResult Report(QueryCustomerReportViewModel queryModel, int pageNo = 1, string sortName = "", string currentSortName = "")
         {
             ViewBag.CustomerName = queryModel.CustomerName;
 
             //增加分頁功能 
-            var tempData = customerViewRepo.All(queryModel).OrderBy(c => c.客戶Id);
+            var tempData = customerViewRepo.All(queryModel, sortName, currentSortName);
             var data = tempData.ToPagedList(pageNo, this._pageSize);
+
+            ViewData["CurrentSortName"] = currentSortName;
+            ViewData["SortName"] = sortName;
+            ViewData["PageNo"] = pageNo;
 
             return View(data);
         }
@@ -172,7 +177,7 @@ namespace MVCHomework_20170703.Controllers
                 return RedirectToAction("Details", new { Id = Id });
             }
 
-            ViewBag.Id = Id; 
+            ViewBag.Id = Id;
             ViewData.Model = customerRepo.Find(Id);
             return View("Details");
         }

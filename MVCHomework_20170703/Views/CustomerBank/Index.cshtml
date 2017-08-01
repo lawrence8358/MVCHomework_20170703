@@ -80,22 +80,22 @@
                         <table class="table">
                             <tr>
                                 <th nowrap>
-                                    @Html.DisplayNameFor(model => model.銀行名稱)
+                                    <a class="tableSort" href="bankName">@Html.DisplayNameFor(model => model.銀行名稱)<span class="sortOrder"></span></a>
                                 </th>
                                 <th nowrap>
-                                    @Html.DisplayNameFor(model => model.銀行代碼)
+                                    <a class="tableSort" href="bankCode">@Html.DisplayNameFor(model => model.銀行代碼)<span class="sortOrder"></span></a>
                                 </th>
                                 <th nowrap>
-                                    @Html.DisplayNameFor(model => model.分行代碼)
+                                    <a class="tableSort" href="bankSubCode">@Html.DisplayNameFor(model => model.分行代碼)<span class="sortOrder"></span></a>
                                 </th>
                                 <th nowrap>
-                                    @Html.DisplayNameFor(model => model.帳戶名稱)
+                                    <a class="tableSort" href="accountName">@Html.DisplayNameFor(model => model.帳戶名稱)<span class="sortOrder"></span></a>
                                 </th>
                                 <th nowrap>
-                                    @Html.DisplayNameFor(model => model.帳戶號碼)
+                                    <a class="tableSort" href="account">@Html.DisplayNameFor(model => model.帳戶號碼)<span class="sortOrder"></span></a>
                                 </th>
                                 <th nowrap>
-                                    @Html.DisplayNameFor(model => model.客戶資料.客戶名稱)
+                                    <a class="tableSort" href="customerName">@Html.DisplayNameFor(model => model.客戶資料.客戶名稱)<span class="sortOrder"></span></a>
                                 </th>
                                 <th></th>
                             </tr>
@@ -135,26 +135,15 @@
             </div>
         </div>
     </div>
+    @Html.Hidden("Table_Sort", ViewData["SortName"])
+    @Html.Hidden("Table_CurrentSortName", ViewData["CurrentSortName"])
+    @Html.Hidden("Table_PageNo", ViewData["PageNo"])
 </div>
  
 @section scripts
 {
+    <script src="~/Scripts/pageAndSort.js"></script>
     <script type="text/javascript">
-        $(function () {
-            $('.pagination>li>a[href]').each(function (i, item) {
-                var page = $(item).attr('href').replace('/CustomerBank?pageNo=', '');
-                $(item).attr('href', '#').click(function () { postPage(page); });
-            });
-        });
-
-        function postPage(page) {
-            var targetFormId = '#form1';
-            if ($(targetFormId).size() > 0) {
-                $('<input>')
-                    .attr({ type: 'hidden', id: 'pageNo', name: 'pageNo', value: page })
-                    .appendTo($(targetFormId));
-                $(targetFormId).submit();
-            }
-        };
-    </script>
+        initPageAndSort("/CustomerBank");
+    </script> 
 }

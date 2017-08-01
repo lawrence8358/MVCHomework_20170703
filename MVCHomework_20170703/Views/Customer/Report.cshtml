@@ -24,7 +24,7 @@
             <div class="box-body">
                 @using (Html.BeginForm("Report", "Customer", FormMethod.Post, new { id = "form1" }))
                 {
-                    <div class="row"> 
+                    <div class="row">
                         <div class="col-md-12">
                             <div class="form-group">
                                 <div class="col-md-2">
@@ -33,16 +33,16 @@
                                     </div>
                                 </div>
                                 <div class="col-md-10">
-                                    @Html.TextBox("CustomerName", null, new { @class = "search-text form-control", placeholder = "客戶名稱" }) 
+                                    @Html.TextBox("CustomerName", null, new { @class = "search-text form-control", placeholder = "客戶名稱" })
                                 </div>
                             </div>
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-md-12" style="text-align: center">
-                            <button type="submit" class="btn btn-default"><i class='fa fa-search'></i>查詢</button> 
+                            <button type="submit" class="btn btn-default"><i class='fa fa-search'></i>查詢</button>
                         </div>
-                    </div> 
+                    </div>
                 }
             </div>
         </div>
@@ -65,13 +65,13 @@
                         <table class="table">
                             <tr>
                                 <th nowrap>
-                                    @Html.DisplayNameFor(model => model.客戶名稱)
+                                    <a class="tableSort" href="customerName">@Html.DisplayNameFor(model => model.客戶名稱)<span class="sortOrder"></span></a>
                                 </th>
                                 <th nowrap>
-                                    @Html.DisplayNameFor(model => model.聯絡人數量)
+                                    <a class="tableSort" href="contactCount">@Html.DisplayNameFor(model => model.聯絡人數量)<span class="sortOrder"></span></a>
                                 </th>
                                 <th nowrap>
-                                    @Html.DisplayNameFor(model => model.銀行帳戶數量)
+                                    <a class="tableSort" href="bankCount">@Html.DisplayNameFor(model => model.銀行帳戶數量)<span class="sortOrder"></span></a>
                                 </th>
                                 <th></th>
                             </tr>
@@ -89,34 +89,23 @@
                                         @Html.DisplayFor(modelItem => item.銀行帳戶數量)
                                     </td>
                                 </tr>
-                            } 
-                        </table> 
+                            }
+                        </table>
                     </div>
                     @Html.PagedListPager(Model as IPagedList, (p) => Url.Action("Report", new { pageNo = p }))
                 </div>
             </div>
         </div>
     </div>
+    @Html.Hidden("Table_Sort", ViewData["SortName"])
+    @Html.Hidden("Table_CurrentSortName", ViewData["CurrentSortName"])
+    @Html.Hidden("Table_PageNo", ViewData["PageNo"])
 </div>
- 
+
 @section scripts
 {
+    <script src="~/Scripts/pageAndSort.js"></script>
     <script type="text/javascript">
-        $(function () {
-            $('.pagination>li>a[href]').each(function (i, item) {
-                var page = $(item).attr('href').replace('/Customer/Report?pageNo=', '');
-                $(item).attr('href', '#').click(function () { postPage(page); });
-            });
-        });
-
-        function postPage(page) {
-            var targetFormId = '#form1';
-            if ($(targetFormId).size() > 0) {
-                $('<input>')
-                    .attr({ type: 'hidden', id: 'pageNo', name: 'pageNo', value: page })
-                    .appendTo($(targetFormId));
-                $(targetFormId).submit();
-            }
-        };
+        initPageAndSort("/Customer/Report");
     </script>
 }

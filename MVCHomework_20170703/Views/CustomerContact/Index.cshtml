@@ -45,7 +45,7 @@
                                     </div>
                                 </div>
                                 <div class="col-md-10">
-                                    @Html.TextBox("CustomerContactName", null, new { @class = "search-text form-control", placeholder = "聯絡人姓名" }) 
+                                    @Html.TextBox("CustomerContactName", null, new { @class = "search-text form-control", placeholder = "聯絡人姓名" })
                                 </div>
                             </div>
                         </div>
@@ -57,7 +57,7 @@
                                     </div>
                                 </div>
                                 <div class="col-md-10">
-                                    @Html.TextBox("JobTitle", null, new { @class = "search-text form-control", placeholder = "職稱" }) 
+                                    @Html.TextBox("JobTitle", null, new { @class = "search-text form-control", placeholder = "職稱" })
                                 </div>
                             </div>
                         </div>
@@ -90,22 +90,22 @@
                             <table class="table">
                                 <tr>
                                     <th nowrap>
-                                        @Html.DisplayNameFor(model => model.職稱)
+                                        <a class="tableSort" href="jobTitle">@Html.DisplayNameFor(model => model.職稱)<span class="sortOrder"></span></a>
                                     </th>
                                     <th nowrap>
-                                        @Html.DisplayNameFor(model => model.姓名)
+                                        <a class="tableSort" href="name">@Html.DisplayNameFor(model => model.姓名)<span class="sortOrder"></span></a>
                                     </th>
                                     <th nowrap>
-                                        @Html.DisplayNameFor(model => model.Email)
+                                        <a class="tableSort" href="email">@Html.DisplayNameFor(model => model.Email)<span class="sortOrder"></span></a>
                                     </th>
                                     <th nowrap>
-                                        @Html.DisplayNameFor(model => model.手機)
+                                        <a class="tableSort" href="mobile">@Html.DisplayNameFor(model => model.手機)<span class="sortOrder"></span></a>
                                     </th>
                                     <th nowrap>
-                                        @Html.DisplayNameFor(model => model.電話)
+                                        <a class="tableSort" href="phone">@Html.DisplayNameFor(model => model.電話)<span class="sortOrder"></span></a>
                                     </th>
                                     <th nowrap>
-                                        @Html.DisplayNameFor(model => model.客戶資料.客戶名稱)
+                                        <a class="tableSort" href="customerName">@Html.DisplayNameFor(model => model.客戶資料.客戶名稱)<span class="sortOrder"></span></a>
                                     </th>
                                     <th></th>
                                 </tr>
@@ -144,27 +144,17 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </div> 
     </div>
+    @Html.Hidden("Table_Sort", ViewData["SortName"])
+    @Html.Hidden("Table_CurrentSortName", ViewData["CurrentSortName"])
+    @Html.Hidden("Table_PageNo", ViewData["PageNo"])
+</div>
 
-    @section scripts
+@section scripts
 {
-        <script type="text/javascript">
-            $(function () {
-                $('.pagination>li>a[href]').each(function (i, item) {
-                    var page = $(item).attr('href').replace('/CustomerContact?pageNo=', '');
-                    $(item).attr('href', '#').click(function () { postPage(page); });
-                });
-            });
-
-            function postPage(page) {
-                var targetFormId = '#form1';
-                if ($(targetFormId).size() > 0) {
-                    $('<input>')
-                        .attr({ type: 'hidden', id: 'pageNo', name: 'pageNo', value: page })
-                        .appendTo($(targetFormId));
-                    $(targetFormId).submit();
-                }
-            };
-        </script>
-    }
+    <script src="~/Scripts/pageAndSort.js"></script>
+    <script type="text/javascript">
+        initPageAndSort("/CustomerContact");
+    </script>
+}

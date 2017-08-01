@@ -25,14 +25,14 @@ namespace MVCHomework_20170703.Controllers
             //return View(customerContactRepo.All().Include(客 => 客.客戶資料));
 
             //增加分頁功能
-            var tempData = customerContactRepo.All().Include(客 => 客.客戶資料).OrderBy(c => c.客戶Id);
+            var tempData = customerContactRepo.All();
             var data = tempData.ToPagedList(pageNo, this._pageSize);
 
             return View(data);
         } 
 
         [HttpPost]
-        public ActionResult Index(QueryCustomerContactViewModel queryModel, int pageNo = 1)
+        public ActionResult Index(QueryCustomerContactViewModel queryModel, int pageNo = 1, string sortName = "", string currentSortName = "")
         {
             if (ModelState.IsValid)
             {
@@ -50,8 +50,12 @@ namespace MVCHomework_20170703.Controllers
                 //return View(query.ToList());
 
                 //增加分頁功能 
-                var tempData = customerContactRepo.All(queryModel).Include(客 => 客.客戶資料).OrderBy(c => c.客戶Id);
+                var tempData = customerContactRepo.All(queryModel, sortName, currentSortName);
                 var data = tempData.ToPagedList(pageNo, this._pageSize);
+
+                ViewData["CurrentSortName"] = currentSortName;
+                ViewData["SortName"] = sortName;
+                ViewData["PageNo"] = pageNo;
 
                 return View(data); 
             }

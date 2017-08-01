@@ -18,10 +18,10 @@ namespace MVCHomework_20170703.Models
 
         public override IQueryable<客戶銀行資訊> All()
         {
-            return base.All().Where(p => !p.是否已刪除 && !p.客戶資料.是否已刪除);
+            return base.All().Where(p => !p.是否已刪除 && !p.客戶資料.是否已刪除).Include(客 => 客.客戶資料).OrderBy(c => c.客戶Id);
         }
 
-        public IQueryable<客戶銀行資訊> All(QueryCustomerBankViewModel queryModel)
+        public IQueryable<客戶銀行資訊> All(QueryCustomerBankViewModel queryModel, string sortName = "", string currentSortName = "")
         {
             var queryList = base.All();
 
@@ -31,7 +31,58 @@ namespace MVCHomework_20170703.Models
                 queryList = queryList.Where(p => p.銀行代碼.Equals(queryModel.BankId));
             if (!string.IsNullOrEmpty(queryModel.CustomerName))
                 queryList = queryList.Where(p => p.客戶資料.客戶名稱.Contains(queryModel.CustomerName));
- 
+
+            queryList = queryList.Include(客 => 客.客戶資料);
+
+            switch (currentSortName)
+            {
+                case "customerName":
+                    if (sortName.Equals(currentSortName))
+                        queryList = queryList.OrderByDescending(c => c.客戶資料.客戶名稱);
+                    else
+                        queryList = queryList.OrderBy(c => c.客戶資料.客戶名稱);
+                    break;
+
+                case "bankName":
+                    if (sortName.Equals(currentSortName))
+                        queryList = queryList.OrderByDescending(c => c.銀行名稱);
+                    else
+                        queryList = queryList.OrderBy(c => c.銀行名稱);
+                    break;
+
+                case "bankCode":
+                    if (sortName.Equals(currentSortName))
+                        queryList = queryList.OrderByDescending(c => c.銀行代碼);
+                    else
+                        queryList = queryList.OrderBy(c => c.銀行代碼);
+                    break;
+
+                case "bankSubCode":
+                    if (sortName.Equals(currentSortName))
+                        queryList = queryList.OrderByDescending(c => c.分行代碼);
+                    else
+                        queryList = queryList.OrderBy(c => c.分行代碼);
+                    break;
+
+                case "accountName":
+                    if (sortName.Equals(currentSortName))
+                        queryList = queryList.OrderByDescending(c => c.帳戶名稱);
+                    else
+                        queryList = queryList.OrderBy(c => c.帳戶名稱);
+                    break;
+
+                case "account":
+                    if (sortName.Equals(currentSortName))
+                        queryList = queryList.OrderByDescending(c => c.帳戶號碼);
+                    else
+                        queryList = queryList.OrderBy(c => c.帳戶號碼);
+                    break;
+                     
+                default:
+                    queryList = queryList.OrderBy(c => c.客戶Id);
+                    break;
+            } 
+
             return queryList;
         }
 
