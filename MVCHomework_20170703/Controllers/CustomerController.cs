@@ -13,7 +13,7 @@ using MVCHomework_20170703.Models.ViewModels;
 namespace MVCHomework_20170703.Controllers
 {
     [MyAuth]
-    public class CustomerController : Controller
+    public class CustomerController : BaseController
     {
         客戶資料Repository customerRepo = RepositoryHelper.Get客戶資料Repository();
         客戶聯絡人Repository customerContactRepo = RepositoryHelper.Get客戶聯絡人Repository();

@@ -8,7 +8,7 @@ using System.Web.Security;
 
 namespace MVCHomework_20170703.Controllers
 {
-    public class HomeController : Controller
+    public class HomeController : BaseController
     {
         public ActionResult Index()
         {

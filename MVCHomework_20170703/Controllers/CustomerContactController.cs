@@ -13,7 +13,7 @@ using PagedList;
 namespace MVCHomework_20170703.Controllers
 {
     [MyAuth]
-    public class CustomerContactController : Controller
+    public class CustomerContactController : BaseController
     {
         客戶資料Repository customerRepo = RepositoryHelper.Get客戶資料Repository();
         客戶聯絡人Repository customerContactRepo = RepositoryHelper.Get客戶聯絡人Repository();
