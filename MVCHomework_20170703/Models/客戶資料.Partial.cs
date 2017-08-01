@@ -6,7 +6,8 @@ namespace MVCHomework_20170703.Models
     
     [MetadataType(typeof(客戶資料MetaData))]
     public partial class 客戶資料
-    {
+    { 
+        public string 確認密碼 { get; set; }
     }
     
     public partial class 客戶資料MetaData
@@ -47,7 +48,7 @@ namespace MVCHomework_20170703.Models
          
         [Required]
         public string 密碼 { get; set; }
-
+          
         public virtual ICollection<客戶銀行資訊> 客戶銀行資訊 { get; set; }
         public virtual ICollection<客戶聯絡人> 客戶聯絡人 { get; set; }
     }

@@ -1,19 +1,20 @@
 ﻿@model MVCHomework_20170703.Models.客戶資料
 
 @{
-    ViewBag.Title = "Edit";
+    ViewBag.Title = "修改客戶資料";
 }
 
-<h2>Edit</h2>
+@section navLink {
+    <li><a href='/Customer/SelfInfo'><i class='fa fa-circle-o active'></i>@ViewBag.Title</a></li>
+}
 
+<text>@ViewBag.A</text>
 
 @using (Html.BeginForm())
 {
     @Html.AntiForgeryToken()
-    
+
     <div class="form-horizontal">
-        <h4>客戶資料</h4>
-        <hr />
         @Html.ValidationSummary(true, "", new { @class = "text-danger" })
         @Html.HiddenFor(model => model.Id)
 
@@ -39,22 +40,6 @@
                 @Html.EditorFor(model => model.密碼, new { htmlAttributes = new { @class = "form-control", type = "password" } })
                 @Html.ValidationMessageFor(model => model.密碼, "", new { @class = "text-danger" })
                 <input type="hidden" id="確認密碼" name="確認密碼" value="@Model.密碼" />
-            </div>
-        </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.客戶分類, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.客戶分類, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.客戶分類, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.統一編號, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.統一編號, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.統一編號, "", new { @class = "text-danger" })
             </div>
         </div>
 
@@ -97,10 +82,6 @@
         </div>
     </div>
 }
-
-<div>
-    @Html.ActionLink("Back to List", "Index")
-</div>
 
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")

@@ -81,7 +81,7 @@
                                     </li>
                                     <li class="user-footer">
                                         <div class="pull-right">
-                                            @Html.ActionLink("Sign out", "Logout", "Home", new { @class = "btn btn-default btn-flat" })
+                                            @Html.ActionLink("Sign out", "Logout", "Home", null, new { @class = "btn btn-default btn-flat" })
                                         </div>
                                     </li>
                                 </ul>
@@ -101,10 +101,17 @@
                 <ul class='sidebar-menu'>
                     @if (HttpContext.Current.User.Identity.IsAuthenticated)
                     {
-                        <li class='treeview'><a href=' @Url.Action("Index", "Customer") '><i class='fa fa-th'></i><span>客戶資料</span></a></li>
-                        <li class='treeview'><a href=' @Url.Action("Index", "CustomerContact") '><i class='fa fa-th'></i><span>客戶聯絡人資料</span></a></li>
-                        <li class='treeview'><a href=' @Url.Action("Index", "CustomerBank") '><i class='fa fa-th'></i><span>客戶銀行資料</span></a></li>
-                        <li class='treeview'><a href=' @Url.Action("Report", "Customer") '><i class='fa fa-th'></i><span>客戶統計</span></a></li>
+                        if ((((System.Web.Security.FormsIdentity)HttpContext.Current.User.Identity).Ticket.UserData.ToString()) == "admin")
+                        {
+                            <li class='treeview'><a href=' @Url.Action("Index", "Customer") '><i class='fa fa-th'></i><span>客戶資料</span></a></li>
+                            <li class='treeview'><a href=' @Url.Action("Index", "CustomerContact") '><i class='fa fa-th'></i><span>客戶聯絡人資料</span></a></li>
+                            <li class='treeview'><a href=' @Url.Action("Index", "CustomerBank") '><i class='fa fa-th'></i><span>客戶銀行資料</span></a></li>
+                            <li class='treeview'><a href=' @Url.Action("Report", "Customer") '><i class='fa fa-th'></i><span>客戶統計</span></a></li>
+                        }
+                        else
+                        {
+                            <li class='treeview'><a href=' @Url.Action("SelfInfo", "Customer")'><i class='fa fa-th'></i><span>修改客戶資料</span></a></li>
+                        }
                         <li class='treeview'><a href=' @Url.Action("Logout", "Home") '><i class='fa fa-th'></i><span>登出</span></a></li>
                     }
                     else

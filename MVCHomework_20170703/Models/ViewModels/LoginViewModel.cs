@@ -20,13 +20,18 @@ namespace MVCHomework_20170703.Models.ViewModels
 
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
-        {
+        { 
             if (this.UserName == "123" && this.Password == "123")
             {
                 yield break;
             }
             else
             {
+                客戶資料Repository customerRepo = RepositoryHelper.Get客戶資料Repository();
+
+                var user = customerRepo.Login(this.UserName, this.Password);
+                if (user != null) yield break;
+
                 yield return new ValidationResult("登入帳號或密碼錯誤", new string[] { "UserName" });
             }
         }

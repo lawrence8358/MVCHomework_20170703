@@ -55,8 +55,8 @@ namespace MVCHomework_20170703.Controllers
         {
             using (XLWorkbook wb = new XLWorkbook())
             {
-                var data = customerRepo.All(queryModel).Select(c => new { c.客戶名稱, c.客戶分類, c.統一編號, c.電話,c.傳真, c.地址, c.Email });
-                 
+                var data = customerRepo.All(queryModel).Select(c => new { c.客戶名稱, c.客戶分類, c.統一編號, c.電話, c.傳真, c.地址, c.Email });
+
                 var ws = wb.Worksheets.Add("客戶資料", 1);
                 ws.Cell(1, 1).Value = "客戶名稱";
                 ws.Cell(1, 2).Value = "客戶分類";
@@ -64,7 +64,7 @@ namespace MVCHomework_20170703.Controllers
                 ws.Cell(1, 4).Value = "電話";
                 ws.Cell(1, 5).Value = "傳真";
                 ws.Cell(1, 6).Value = "地址";
-                ws.Cell(1, 7).Value = "Email"; 
+                ws.Cell(1, 7).Value = "Email";
 
                 ws.Cell(2, 1).InsertData(data);
 
@@ -156,10 +156,11 @@ namespace MVCHomework_20170703.Controllers
         // 詳細資訊，請參閱 http://go.microsoft.com/fwlink/?LinkId=317598。
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "Id,帳號,密碼,客戶分類,客戶名稱,統一編號,電話,傳真,地址,Email")] 客戶資料 客戶資料)
+        public ActionResult Edit([Bind(Include = "Id,帳號,確認密碼,密碼,客戶分類,客戶名稱,統一編號,電話,傳真,地址,Email")] 客戶資料 客戶資料)
         {
             if (ModelState.IsValid)
             {
+                if (!客戶資料.密碼.Equals(客戶資料.確認密碼)) 客戶資料.密碼 = System.Web.Helpers.Crypto.Hash(客戶資料.密碼);
                 customerRepo.Modify(客戶資料);
                 return RedirectToAction("Index");
             }
@@ -230,6 +231,40 @@ namespace MVCHomework_20170703.Controllers
             ViewBag.Id = Id;
             ViewData.Model = customerRepo.Find(Id);
             return View("Details");
+        }
+
+        [Route("Customer/SelfInfo")]
+        public ActionResult SelfInfo()
+        {
+            客戶資料 客戶資料 = null;
+            string userData = ((System.Web.Security.FormsIdentity)User.Identity).Ticket.UserData.ToString();
+            int id;
+
+            if (int.TryParse(userData, out id)) 客戶資料 = customerRepo.Find(id);
+            if (客戶資料 == null) return HttpNotFound();
+
+            return View(客戶資料);
+        }
+
+        [Route("Customer/SelfInfo")]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult SelfInfo(FormCollection form)
+        {
+            客戶資料 客戶資料 = null;
+            string userData = ((System.Web.Security.FormsIdentity)User.Identity).Ticket.UserData.ToString();
+            int id;
+
+            if (int.TryParse(userData, out id)) 客戶資料 = customerRepo.Find(id);
+
+            if (TryUpdateModel(客戶資料, new string[] { "Id", "帳號", "密碼", "確認密碼", "客戶分類", "客戶名稱", "統一編號", "電話", "傳真", "地址", "Email" }))
+            {
+                if (!客戶資料.密碼.Equals(客戶資料.確認密碼)) 客戶資料.密碼 = System.Web.Helpers.Crypto.Hash(客戶資料.密碼);
+                customerRepo.Modify(客戶資料);
+                return RedirectToAction("SelfInfo", new { account = 客戶資料.帳號 });
+            }
+
+            return View(客戶資料);
         }
 
         protected override void Dispose(bool disposing)

@@ -11,6 +11,8 @@ namespace MVCHomework_20170703
     {
         public static void RegisterRoutes(RouteCollection routes)
         {
+            routes.MapMvcAttributeRoutes(); //增加定義屬性路由，必須所有定義的最前面
+
             routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
 
             routes.MapRoute(

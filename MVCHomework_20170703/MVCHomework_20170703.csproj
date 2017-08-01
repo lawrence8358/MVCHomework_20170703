@@ -3425,6 +3425,7 @@
     <Content Include="Views\Customer\Report.cshtml" />
     <Content Include="Views\Home\Login.cshtml" />
     <Content Include="Views\Customer\ContactList.cshtml" />
+    <Content Include="Views\Customer\SelfInfo.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Views\Base\" />

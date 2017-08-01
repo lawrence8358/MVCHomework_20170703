@@ -116,16 +116,19 @@ namespace MVCHomework_20170703.Models
             //ProductBatchView[] 此寫法在前端必須對應data[i].ProductId的格式，但在C# 6.0有問題
             //因此目前的解法式移除Microsoft.CodeDom.Providers.DotNetCompilerPlatform
             //解法可參考 http://haacked.com/archive/2008/10/23/model-binding-to-a-list.aspx/
-            foreach (var item in data)
+            if (data != null)
             {
-                //不需要檢查是否有異動，EF的機制會自動檢查
-                var contact = this.Find(item.Id);
-                contact.職稱 = item.職稱;
-                contact.手機 = item.手機;
-                contact.電話 = item.電話;
-            }
+                foreach (var item in data)
+                {
+                    //不需要檢查是否有異動，EF的機制會自動檢查
+                    var contact = this.Find(item.Id);
+                    contact.職稱 = item.職稱;
+                    contact.手機 = item.手機;
+                    contact.電話 = item.電話;
+                }
 
-            this.UnitOfWork.Commit();
+                this.UnitOfWork.Commit();
+            }
         }
     }
 

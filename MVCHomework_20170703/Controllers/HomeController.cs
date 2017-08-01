@@ -1,4 +1,5 @@
-﻿using MVCHomework_20170703.Models.ViewModels;
+﻿using MVCHomework_20170703.Models;
+using MVCHomework_20170703.Models.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,6 +11,8 @@ namespace MVCHomework_20170703.Controllers
 {
     public class HomeController : BaseController
     {
+        客戶資料Repository customerRepo = RepositoryHelper.Get客戶資料Repository();
+
         public ActionResult Index()
         {
             return View();
@@ -26,13 +29,25 @@ namespace MVCHomework_20170703.Controllers
         {
             if (ModelState.IsValid)
             {
+                string userData = string.Empty;
+
+                if (login.UserName == "123")
+                {
+                    userData = "admin";
+                }
+                else
+                {
+                    //一般會員
+                    userData = customerRepo.FindByAccount(login.UserName).Id.ToString();
+                }
+
                 //Web.config要設定
                 FormsAuthenticationTicket ticket = new FormsAuthenticationTicket(1,
                     login.UserName,
                     DateTime.Now,
                     DateTime.Now.AddMinutes(30),
                     false,
-                    login.UserName, //userData
+                    userData, //userData
                     FormsAuthentication.FormsCookiePath);
 
                 //// Encrypt the ticket.
